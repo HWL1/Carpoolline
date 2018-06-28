@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Carpoolline.Passenger.User_Query.Dao.User_query_mapper_face">
+
+  	<resultMap id="System_User_ResultMap"
+		type="com.Carpoolline.Passenger.User_Query.Domain_Mapper.User_query_waitingcar_pojo">
+	</resultMap>
+	
+	
+	<parameterMap id="System_User_ParameterMap"
+		type="com.Carpoolline.Passenger.User_Query.Domain_Mapper.User_query_waitingcar_pojo">
+
+	</parameterMap>
+	
+	<resultMap id="waitingcartousers_ResultMap"
+		type="com.Carpoolline.Passenger.User_Query.Domain_Mapper.User_query_waitingcartousers_pojo">
+
+	</resultMap>
+	<sql id="select_waitingcar">
+	  waitingId,departure,destination,startTime,endTime,personNumber,state,driverId,smalldep,smalldes,waitingTimeType,price,version,startClock,endClock
+	</sql>
+	
+	<sql id="select_waitingcartousers_pojo">
+	waitingcartousersId,waitingId,userId
+	</sql>
+	
+	<sql id="select_waitingcartousers_id">
+	    userId
+	</sql>
+	
+	<sql id="insert_waitingcartousers_pojo">
+	waitingId,userId,state
+	</sql>
+	
+  <!-- 按时间点查找 -->
+	<select id="select_waitingcar_Point" resultType="com.Carpoolline.Passenger.User_Query.Domain_Mapper.User_query_waitingcar_pojo" parameterType="java.util.Map">
+	select <include refid="select_waitingcar" /> from waitingcar where departure=#{departure} 
+	                                                                   and destination=#{destination} 
+	                                                                   and waitingTimeType=#{waitingTimeType}
+	                                                                   and startTime=#{startTime}
+	                                                                   and startClock=#{startClock}
+	
+	</select>
+	<!-- 按时间段查找 -->
+	<select id="select_waitingcar_Slot" resultType="com.Carpoolline.Passenger.User_Query.Domain_Mapper.User_query_waitingcar_pojo" parameterType="java.util.Map">
+	select <include refid="select_waitingcar" /> from waitingcar where      departure=#{departure}
+	                                                                        and destination=#{destination}
+	                                                                        and waitingTimeType=#{waitingTimeType}
+	                                                                        and startTime=#{startTime}                                                           
+	</select>
+	
+	<!-- 按waitingId查找 -->
+	<select id="select_waitingcar_waitingId" resultType="com.Carpoolline.Passenger.User_Query.Domain_Mapper.User_query_waitingcar_pojo" parameterType="int">
+	select <include refid="select_waitingcar" /> from waitingcar where   waitingId=#{waitingId}                                                           
+	</select>
+	
+	<!-- 按waitingId查找NO -->
+	<select id="select_waitingcar_waitingId_state" resultType="com.Carpoolline.Passenger.User_Query.Domain_Mapper.User_query_waitingcar_pojo" >
+	select <include refid="select_waitingcar" /> from waitingcar where   waitingId=#{waitingId}  and  state=#{state}                                                       
+	</select>
+	
+	
+	<!-- 查找用户id 和用户数量-->
+	<select id="select_waitingcartousers_userid" resultType="Int" parameterType="Int">
+	select userId from waitingcartousers where waitingId=#{waitingId}
+	</select>
+	
+	<!-- 查找用户id 付款state-->
+	<select id="select_waitingcartousers_state" resultType="String" >
+	select state from waitingcartousers where waitingId=#{waitingId} and userId=#{userId} and state=#{state}
+	</select>
+	
+  <!-- 查找用户waitingId和数量-->
+	<select id="select_waitingcartousers_waitingId" resultType="Int" parameterType="Int">
+	select DISTINCT waitingId from waitingcartousers where userId=#{userId} 
+	</select>
+  
+  <!-- 添加update_waitingcar_ personNumber-->
+  <update id="update_waitingcar_personNumber_add" >
+  
+     update  waitingcar set personNumber=personNumber+#{personNumber},version=version+1 where waitingId=#{waitingId} and version=#{version}
+  </update>
+  
+  
+  <!-- 减少update_waitingcar_ personNumber-->
+  <update id="update_waitingcar_personNumber_subtract">
+  
+     update  waitingcar set personNumber=personNumber-#{personNumber},version=version+1 where waitingId=#{waitingId} and version=#{version}
+  </update>
+  
+  
+ <!-- 改变waitingcar状态  YES -->
+ <update id="update_waitingcar_state" >
+  
+     update  waitingcar set state=#{state} where waitingId=#{waitingId}
+  </update>
+  
+  <!-- 查找 waitingcar人数  YES-->
+<select id="select_waitingcar_personNumber" resultType="Int" >
+
+select personNumber from waitingcar where waitingId=#{waitingId}
+
+</select>
+  
+  
+  
+  
+  
+  
+  
+	<!-- 添加用户 waitingcartousers -->
+  <insert id="insert_waitingcartousers_user"  parameterType="Map">
+       insert into waitingcartousers  (<include refid="insert_waitingcartousers_pojo" /> 
+		)values
+		(#{waitingId,jdbcType=INTEGER},
+		#{userId,jdbcType=INTEGER},
+		#{state,jdbcType=VARCHAR}
+		)
+  </insert>
+  
+  <!-- 删除用户 waitingcartousers  waitingId-->
+  <delete id="delete_waitingcartousers_user" parameterType="int">
+    delete from waitingcartousers where waitingId=#{waitingId}
+    
+    </delete>
+<!-- 删除用户 waitingcartousers  userId-->
+  <delete id="delete_waitingcartousers_userId" parameterType="int">
+    delete from waitingcartousers where userId=#{userId}
+    
+    </delete>
+
+</mapper>

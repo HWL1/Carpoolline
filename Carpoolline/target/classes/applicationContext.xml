@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xsi:schemaLocation="  
+        http://www.springframework.org/schema/aop   
+        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/security   
+        http://www.springframework.org/schema/security/spring-security-3.2.xsd  
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/data/jpa   
+        http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd  
+        http://www.springframework.org/schema/tx   
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd  
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+       ">
+<!-- 引入properties配置文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:jdbc.properties" />
+	</bean>
+	
+	<!-- 使用注解式注入 -->
+	<context:annotation-config />
+	
+	<!-- 自动扫描   **********************-->
+	<context:component-scan base-package="com.Carpoolline" />
+	
+	<!-- 配置数据源   ****************** -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${driver}" />
+		<property name="url" value="${url}" />
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" />
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="${initialSize}"></property>
+		<!-- 连接池最大数量 -->
+		<property name="maxActive" value="${maxActive}"></property>
+		<!-- 连接池最大空闲 -->
+		<property name="maxIdle" value="${maxIdle}"></property>
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="${minIdle}"></property>
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="${maxWait}"></property>
+	</bean>
+	
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		
+		
+		<!-- 自动扫描mapping.xml文件   -->
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:com/Carpoolline/*/*/Domain_Mapper/*.xml</value>
+				<value>classpath:com/Carpoolline/*/*/*/Domain_Mapper/*.xml</value>
+			</list>
+		</property>
+	</bean>
+		
+		
+		<!-- 使用JDBC事物 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 使用注解定义事物-->
+	<tx:annotation-driven  transaction-manager="transactionManager"/> 
+	
+	
+	<!-- AOP配置事物 
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="select*" read-only="true" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>-->
+		
+		<!-- 配置AOP切面 -->
+	    <!-- *  是任意返回值，可以有返回值，也可以是void没有返回值的方法 -->
+	    <!--com.Red_envelopes_demo.Service.*    是指定目录下的指定类任意方法-->
+	    <!-- (..)             是任何参数，可以是没有参数
+	<aop:config>
+		<aop:pointcut id="transactionPointcut"
+			expression="execution(* com.Carpoolline.*.Service.*.*(..)) or execution(* com.Carpoolline.*.*.Service.*.*(..))" />
+		<aop:advisor pointcut-ref="transactionPointcut"
+			advice-ref="transactionAdvice" />
+	</aop:config> -->
+	
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!--basePackage指定要扫描的包，在此包之下的映射器都会被搜索到。 可指定多个包，包与包之间用逗号或分号分隔--> 
+		<property name="basePackage"
+			value="com.Carpoolline.*.*.Dao,com.Carpoolline.*.*.*.Dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean> 
+	
+	</beans>

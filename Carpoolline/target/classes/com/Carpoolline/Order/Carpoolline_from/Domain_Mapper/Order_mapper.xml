@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Carpoolline.Order.Carpoolline_from.Dao.Order_mapper_face">
+
+  	<resultMap id="resultMap_Order_carpoolline"
+		type="com.Carpoolline.Order.Carpoolline_from.Domain_Mapper.Order_carpoolline_pojo">
+	</resultMap>
+	
+	<parameterMap id="parameterMap_Order_carpoolline"
+		type="com.Carpoolline.Order.Carpoolline_from.Domain_Mapper.Order_carpoolline_pojo">
+
+	</parameterMap>
+	
+	
+	
+	
+	<resultMap id="resultMap_ordertousers"
+		type="com.Carpoolline.Order.Carpoolline_from.Domain_Mapper.Ordertousers_pojo">
+	</resultMap>
+	
+	<parameterMap id="parameterMap_ordertousers"
+		type="com.Carpoolline.Order.Carpoolline_from.Domain_Mapper.Ordertousers_pojo">
+
+	</parameterMap>
+	
+	<sql id="insert_Order_Base_Column_List">
+	orderId, departure,destination,driverId,starTime,finalTime,price,state,note,smalldep,smalldes,waitingTimeType
+	</sql>
+	<sql id="select_Order_all">
+	orderId, departure,destination,driverId,starTime,finalTime,price,state,note,smalldep,smalldes,waitingTimeType</sql>
+	
+	<sql id="select_ordertousers_Column_List">
+	ordertousersId,orderId,userId
+	</sql>
+	<sql id="insert_ordertousers_Column_List">
+	    orderId,userId
+	</sql>
+	
+	
+	
+	    <!-- 创建 ordertousers-->
+		<insert id="create_ordertousers" parameterType="com.Carpoolline.Order.Carpoolline_from.Domain_Mapper.Ordertousers_pojo">
+		insert into ordertousers  (<include refid="insert_ordertousers_Column_List" /> 
+		)values
+		(#{orderId,jdbcType=INTEGER},
+		#{userId,jdbcType=INTEGER}
+		)
+		</insert>
+		
+		<!-- 创建carpoolline_Order -->
+		<insert id="create_order_carpoolline" parameterMap="parameterMap_Order_carpoolline"  >
+		insert into  order_carpoolline (<include refid="insert_Order_Base_Column_List" /> 
+		)values
+		(#{orderId,jdbcType=INTEGER},
+		#{departure,jdbcType=VARCHAR},
+		#{destination,jdbcType=VARCHAR},
+		#{driverId,jdbcType=INTEGER},
+		#{starTime,jdbcType=DATE},
+		#{finalTime,jdbcType=DATE},
+		#{price,jdbcType=DOUBLE},
+		#{state,jdbcType=VARCHAR},
+		#{note,jdbcType=VARCHAR},
+		#{smalldep,jdbcType=VARCHAR},
+		#{smalldes,jdbcType=VARCHAR},
+		#{waitingTimeType,jdbcType=VARCHAR}	
+		)
+		
+		</insert>
+		
+		
+		<!-- 查找order -->
+		<select id="select_order_all_orderId"  resultMap="resultMap_Order_carpoolline" >
+		select <include refid="select_Order_all" /> from order_carpoolline where orderId=#{orderId}
+		</select>
+		
+		
+		<!-- 查找orderId_ordertousers -->
+		<select id="select_ordertousers_orderId_userId" resultType="java.lang.Integer" >
+		select DISTINCT orderId  from ordertousers where  userId=#{userId}
+		
+		</select>
+		
+		<!-- 查找orderId_order -->
+		<select id="select_order_orderId_waitingId" resultType="java.lang.Integer" >
+		select orderId  from order_carpoolline where  driverId=#{driverId} 
+		
+		</select>
+
+
+
+</mapper>

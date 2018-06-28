@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Carpoolline.Passenger.User_payment.Dao.Payment_mapper_face">
+
+
+  
+  	<resultMap id="System_User_ResultMap"
+		type="com.Carpoolline.Passenger.User_payment.Domain_Mapper.Payment_waitingcartousers_pojo">
+	</resultMap>
+	
+	<parameterMap id="System_User_ParameterMap"
+		type="com.Carpoolline.Passenger.User_payment.Domain_Mapper.Payment_waitingcartousers_pojo">
+
+	</parameterMap>
+	
+	<sql id="select_waitingcartousers"> waitingcartousersId,waitingId,userId</sql>
+
+
+
+
+      <!-- user退款 YES NO-->
+      <update id="update_waitingcar_state" >
+  
+     update  waitingcartousers set state=#{state} where  waitingId=#{waitingId} and userId=#{userId}
+      </update>
+      
+      
+      <!-- select user已经付款 YES NO-->
+      <select id="select_waitingcartousers_state" resultType="java.lang.Integer" >
+      
+      select userId from waitingcartousers where waitingId=#{waitingId} and state=#{state}
+      </select>
+      
+     
+      
+      
+</mapper>

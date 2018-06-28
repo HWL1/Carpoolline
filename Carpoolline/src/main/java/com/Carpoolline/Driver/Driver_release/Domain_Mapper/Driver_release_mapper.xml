@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Carpoolline.Driver.Driver_release.Dao.Driver_release_mapper_face">
+
+  	<resultMap id="System_User_ResultMap"
+		type="com.Carpoolline.Driver.Driver_release.Domain_Mapper.Driver_release_pojo">
+	</resultMap>
+	
+	<parameterMap id="System_User_ParameterMap"
+		type="com.Carpoolline.Driver.Driver_release.Domain_Mapper.Driver_release_pojo">
+
+	</parameterMap>
+	
+	<sql id="Base_Column_List">
+		 departure,destination,startTime,endTime,state,driverId,stateClock,endClock;
+	</sql>
+	
+	<sql id="waitingcar_pojo">
+		 waitingId, departure,destination,startTime,endTime,personNumber,state,driverId,smalldep,smalldes,waitingTimeType,price,startClock,endClock,version
+	</sql>
+	<sql id="insert_waitingcar">
+		 departure,destination,startTime,endTime,personNumber,state,driverId,smalldep,smalldes,waitingTimeType,price,startClock,endClock,version
+	</sql>
+	<!-- 创建发车表 -->
+		<insert id="Insert_waitingcar" parameterMap="System_User_ParameterMap">
+		insert into waitingcar  (<include refid="insert_waitingcar" /> )values
+	   (
+	    #{departure,jdbcType=VARCHAR},
+		#{destination,jdbcType=VARCHAR},
+		#{startTime,jdbcType=DATE},
+		#{endTime,jdbcType=DATE},
+		#{personNumber,jdbcType=VARCHAR},
+		#{state,jdbcType=VARCHAR},
+		#{driverId,jdbcType=INTEGER},
+		#{smalldep,jdbcType=VARCHAR},
+		#{smalldes,jdbcType=VARCHAR},
+		#{waitingTimeType,jdbcType=VARCHAR},
+		#{price,jdbcType=DOUBLE},
+		#{startClock,jdbcType=INTEGER},
+		#{endClock,jdbcType=INTEGER},
+		#{version,jdbcType=INTEGER}
+		)
+		</insert>
+
+
+      <!-- 查找发车表 -->
+		<select id="Select_waitingcar_driverId" parameterType="Int" resultMap="System_User_ResultMap">
+		select   <include refid="insert_waitingcar" /> 
+		from waitingcar where driverId=#{driverId}
+		
+		</select>
+		<!-- 查找人数 -->
+		<select id="Select_waitingcar_personNumber" parameterType="Int" resultType="com.Carpoolline.Driver.Driver_release.Domain_Mapper.Driver_release_pojo">
+		select  <include refid="insert_waitingcar" /> 
+		from waitingcar where waitingId=#{waitingId}
+		
+		</select>
+		
+	   <!-- 删除表 waitingcar_waitingId-->
+		<delete id="Delete_waitingcar" >
+		delete from waitingcar where waitingId=#{waitingId} and version=#{version}
+		</delete>
+		<!-- 更新表  waitingcar-->
+		<update id="Update_waitingcar" parameterMap="System_User_ParameterMap">
+		UPDATE waitingcar SET departure = #{departure},
+		                     destination = #{destination},
+		                     startTime=#{startTime},
+		                     endTime=#{endTime},
+		                     state=#{state},
+		                     smalldep=#{smalldep},
+		                     smalldes=#{smalldes},
+		                     waitingTimeType=#{waitingTimeType},
+		                     price=#{price},
+		                    stateClock= #{stateClock},
+		                     endClock=#{endClock},
+		                     version=version+1
+                             WHERE waitingId = #{waitingId} and version=#{version}
+		</update>
+
+
+</mapper>

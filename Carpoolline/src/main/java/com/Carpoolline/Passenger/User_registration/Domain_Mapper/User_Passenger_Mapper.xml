@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Carpoolline.Passenger.User_registration.Dao.User_registration_mapper_face">
+
+  	<resultMap id="System_User_ResultMap"
+		type="com.Carpoolline.Passenger.User_registration.Domain_Mapper.User_Passenger">
+	</resultMap>
+	
+	<parameterMap id="System_User_ParameterMap"
+		type="com.Carpoolline.Passenger.User_registration.Domain_Mapper.User_Passenger">
+
+	</parameterMap>
+	
+	<sql id="Base_Column_List">
+		 userName, userPassword,userTel
+	</sql>
+	
+	<!-- 创建用户 -->
+		<insert id="Insert" parameterMap="System_User_ParameterMap">
+		insert into users  (<include refid="Base_Column_List" /> 
+		)values
+		(#{UserName,jdbcType=VARCHAR},
+		#{UserPassword,jdbcType=VARCHAR},
+		#{UserTel,jdbcType=VARCHAR}
+		)
+		</insert>
+
+
+
+</mapper>

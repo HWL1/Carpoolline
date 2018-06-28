@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Carpoolline.Driver.User_registration.Dao.User_Driver_registration_mapper_face">
+
+  	<resultMap id="System_User_ResultMap"
+		type="com.Carpoolline.Driver.User_registration.Domain_Mapper.User_Driver">
+	</resultMap>
+	
+	<parameterMap id="System_User_ParameterMap"
+		type="com.Carpoolline.Driver.User_registration.Domain_Mapper.User_Driver">
+
+	</parameterMap>
+	
+	<sql id="Base_Column_List">
+		driverId ,driverName,driverPassword,driverTel,carType,carCard,driverType,driverStar
+	</sql>
+	<sql id="Base_Column_List2">
+		 driverName,driverPassword,driverTel,carType,carCard,driverType,driverStar
+	</sql>
+	
+	<!-- 创建用户 -->
+		<insert id="Insert" parameterMap="System_User_ParameterMap">
+		insert into drivers  (<include refid="Base_Column_List2" /> 
+		)values
+		(#{driverName,jdbcType=VARCHAR},
+		#{driverPassword,jdbcType=VARCHAR},
+		#{driverTel,jdbcType=VARCHAR},
+		#{carType,jdbcType=VARCHAR},
+		#{carCard,jdbcType=VARCHAR},
+		#{driverType,jdbcType=VARCHAR},
+		#{driverStar,jdbcType=INTEGER}
+		)
+		</insert>
+
+
+      <!-- 查找用户 -->
+		<select id="Select" parameterType="String" resultMap="System_User_ResultMap">
+		select   <include refid="Base_Column_List" /> 
+		from drivers where driverName=#{driverName}
+		
+		</select>
+		
+		<!-- 查找driver信息 -->
+		<select id="Drivers_Search" parameterType="int"  resultMap="System_User_ResultMap">
+		select <include refid="Base_Column_List" /> 
+		from  drivers where driverId=#{driverId}
+		</select>
+
+
+</mapper>
